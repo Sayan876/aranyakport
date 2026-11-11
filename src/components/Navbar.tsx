@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, X, Package } from "lucide-react";
@@ -14,6 +13,35 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Handle mobile navigation and smooth scrolling
+  const handleMobileNavigation = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    e.preventDefault();
+
+    setIsOpen(false);
+
+    const target = document.querySelector(href);
+
+    if (target) {
+      setTimeout(() => {
+        const top =
+          target.getBoundingClientRect().top +
+          window.scrollY -
+          90;
+
+        window.scrollTo({
+          top,
+          behavior: "smooth",
+        });
+
+        // Update URL hash
+        window.history.replaceState(null, "", href);
+      }, 100);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 z-50 w-full border-b border-neutral-200 bg-white/95 backdrop-blur-md transition-colors duration-300 dark:border-neutral-800 dark:bg-[#171717]/95">
@@ -34,6 +62,7 @@ export default function Navbar() {
             <h1 className="text-xl font-bold tracking-tight text-neutral-900 dark:text-white">
               ARANYAK
             </h1>
+
             <p className="text-[10px] font-semibold tracking-[2.5px] text-neutral-500 dark:text-neutral-400">
               COURIER SERVICE
             </p>
@@ -64,6 +93,7 @@ export default function Navbar() {
             className="rounded-lg p-2 text-neutral-800 transition-colors hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 md:hidden"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -84,12 +114,16 @@ export default function Navbar() {
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
+            id="mobile-navigation"
             key="mobile-menu"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{
-              height: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+              height: {
+                duration: 0.35,
+                ease: [0.22, 1, 0.36, 1],
+              },
               opacity: { duration: 0.2 },
             }}
             className="overflow-hidden border-t border-neutral-200 bg-white shadow-lg dark:border-neutral-800 dark:bg-[#171717] md:hidden"
@@ -118,7 +152,9 @@ export default function Navbar() {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) =>
+                    handleMobileNavigation(e, link.href)
+                  }
                   variants={{
                     open: {
                       opacity: 1,
@@ -141,4 +177,4 @@ export default function Navbar() {
       </AnimatePresence>
     </nav>
   );
-}
+      }
