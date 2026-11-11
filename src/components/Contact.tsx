@@ -10,7 +10,7 @@ import {
 
 const Contact = () => {
   const phone = "7063166843";
-  const email = "suryadeepdutta420@gmail.com";
+  const email = "aranyakcourierservice@gmail.com";
 
   const contacts = [
     {
